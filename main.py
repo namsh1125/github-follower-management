@@ -87,6 +87,17 @@ def unfollow_user(username: str):
     print(f"Unfollowed: {username}")
 
 
+def follow_user(username: str):
+    """
+    특정 사용자를 팔로우하는 함수
+    """
+    # API 참고: https://docs.github.com/ko/rest/users/followers?apiVersion=2022-11-28#follow-a-user
+    url = f"{BASE_URL}/user/following/{username}"
+    response = requests.put(url, headers=headers)
+    response.raise_for_status()
+    print(f"Followed: {username}")
+
+
 def get_all_pages(url: str) -> list:
     """
     주어진 URL에서 모든 페이지의 결과를 가져오는 함수
@@ -112,11 +123,18 @@ def main():
     followers = get_followers()
     stargazers = get_stargazers()
 
-    to_keep = followers.union(stargazers)
-    # 나를 팔로우 하지 않거나 스타를 주지 않은 사용자이지만, 팔로우를 유지하고 싶은 경우 추가하면 됨
-    # to_keep.add("username")
-    to_unfollow = [user for user in following if user not in to_keep]
+    # 팔로우 진행
+    to_follow = followers - following  # 상대방이 나를 팔로우하지만, 내가 상대방을 팔로우하지 않는 경우
+    for user in to_follow:
+        follow_user(user)
 
+    # 언팔로우 진행
+    to_keep = followers.union(stargazers)  # 나를 팔로우하거나 스타를 준 사용자
+
+    # 참고) 나를 팔로우 하지 않거나 스타를 주지 않은 사용자이지만, 팔로우를 유지하고 싶은 경우 추가하면 됨
+    # to_keep.add("username")
+
+    to_unfollow = [user for user in following if user not in to_keep]
     for user in to_unfollow:
         unfollow_user(user)
 
