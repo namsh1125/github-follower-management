@@ -190,6 +190,7 @@ def main():
     follow_users(to_follow, headers)
 
     # 언팔로우 진행
+    # 팔로우를 유지할 사용자 목록
     to_keep = followers.union(stargazers)  # 나를 팔로우하거나 스타를 준 사용자
 
     # 참고) 나를 팔로우 하지 않거나 스타를 주지 않은 사용자이지만, 팔로우를 유지하고 싶은 경우 추가하면 됨
